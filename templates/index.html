@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Télécharger un PDF vers Airtable</title>
+</head>
+<body>
+    <h1>Télécharger un PDF vers Airtable</h1>
+    
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    <form method="post" enctype="multipart/form-data">
+        <label for="pdf_file" class="custom-file-label" id="file-label">Choisir un fichier</label>
+        <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" style="display: none;" onchange="updateFileName()">
+        <br><br>
+        <button type="submit">Télécharger et Traiter</button>
+    </form>
+
+    {% if extracted_info %}
+        <h2>Informations extraites:2>
+        <p>{{ extracted_info }}</p>
+    {% endif %}
+</body>
+
+<script>
+    function updateFileName() {
+        var input = document.getElementById('pdf_file');
+        var label = document.getElementById('file-label');
+        if (input.files && input.files.length > 0) {
+            label.textContent = input.files[0].name;
+        } else {
+            label.textContent = "Aucun fichier choisi";
+        }
+    }
+    </script>
+    
+</html>
