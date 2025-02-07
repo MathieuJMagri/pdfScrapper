@@ -43,6 +43,10 @@ def index():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
             try:
+                # Load the PDF with pdfquery
+                pdf = pdfquery.PDFQuery(filepath)
+                pdf.load()
+
                 x0 = 18.000
                 x1 = 593.00
 
