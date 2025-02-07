@@ -43,15 +43,14 @@ def index():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filepath)
             try:
-                # Load the PDF with pdfquery
-                pdf = pdfquery.PDFQuery(filepath)
-                pdf.load()
+                x0 = 18.000
+                x1 = 593.00
 
                 ##################################1. Gender Extraction #####################################################################
                 genderLabel = pdf.pq('LTTextLineHorizontal:contains("Genre de la personne")')
                 left_corner = float(genderLabel.attr('x0'))
                 bottom_corner = float(genderLabel.attr('y0'))
-                genderTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                genderTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
 
                 #Remove checked box and space and convert to string
                 gender = ''.join(genderTextArray[2:])
@@ -63,7 +62,7 @@ def index():
                 ageLabel = pdf.pq('LTTextLineHorizontal:contains("Âge (par tranches)")')
                 left_corner = float(ageLabel.attr('x0'))
                 bottom_corner = float(ageLabel.attr('y0'))
-                ageTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                ageTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
 
                 #Remove checked box and space and convert to string
                 age = ''.join(ageTextArray[2:])
@@ -75,7 +74,7 @@ def index():
                 financeLabel = pdf.pq('LTTextLineHorizontal:contains("Situation")')
                 left_corner = float(financeLabel.attr('x0'))
                 bottom_corner = float(financeLabel.attr('y0'))
-                financeTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                financeTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
 
                 #Remove checked box and space and convert to string
                 financialSituation = ''.join(financeTextArray[2:])
@@ -87,7 +86,7 @@ def index():
                 consultationLabel = pdf.pq('LTTextLineHorizontal:contains("Motifs")')
                 left_corner = float(consultationLabel.attr('x0'))
                 bottom_corner = float(consultationLabel.attr('y0'))
-                consultationTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                consultationTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
 
                 #Remove checked box and space and convert to string
                 reasonForConsultation = ''.join(consultationTextArray[2:])
@@ -99,7 +98,7 @@ def index():
                 serviceLabel = pdf.pq('LTTextLineHorizontal:contains("Demande")')
                 left_corner = float(serviceLabel.attr('x0'))
                 bottom_corner = float(serviceLabel.attr('y0'))
-                serviceTextArray = pdf.pq('LTTextLineHorizontal:overlaps_bbox("%s, %s, %s, %s")' % (left_corner+150, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                serviceTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
 
                 #Remove checked box and space and convert to string
                 serviceForConsultation = ''.join(serviceTextArray[2:])
@@ -111,7 +110,8 @@ def index():
                 antecedentLabel = pdf.pq('LTTextLineHorizontal:contains("Antécédents de suivis en santé mentale")')
                 left_corner = float(antecedentLabel.attr('x0'))
                 bottom_corner = float(antecedentLabel.attr('y0'))
-                antecedentTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (left_corner, bottom_corner-30, left_corner+150, bottom_corner)).text()
+                antecedentTextArray = pdf.pq('LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (x0, bottom_corner-30, x1, bottom_corner)).text()
+
 
                 #Remove checked box and space and convert to string
                 antecedent = ''.join(antecedentTextArray[2:])
@@ -150,11 +150,14 @@ def index():
                 ######################################################################################################################
                 ######################################################################################################################
                 ######################################################################################################################
+
+
+
                 
             except Exception as e:
                 flash(f"Erreur lors du traitement du PDF : {e}")
             # Optionally, remove the file after processing
-            # os.remove(filepath)
+            os.remove(filepath)
         else:
             flash('Format invalide. Le fichier doit être un pdf.')
     return render_template('index.html', extracted_info=extracted_info)
